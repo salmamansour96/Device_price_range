@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Range Prediction and Device Management</title>
+    <h3>Devices List</h3>
+    <button onclick="fetchDevices()">Fetch Devices</button>
+    <ul id="devices-list"></ul>
+
+    <script>
+        async function fetchDevices() {
+            try {
+                const response = await fetch('/api/devices');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const devices = await response.json();
+                console.log(devices);  // Debugging: log the devices to check the data
+                const devicesList = document.getElementById('devices-list');
+                devicesList.innerHTML = devices.map(device => `
+                    <li>
+                        Battery Power: ${device.battery_power}, Blue: ${device.blue}, Clock Speed: ${device.clock_speed}, Dual SIM: ${device.dual_sim}, FC: ${device.fc}, 4G: ${device.four_g}, M Depth: ${device.m_dep}, Cores: ${device.n_cores}, PC: ${device.pc}, PX Height: ${device.px_height}, PX Width: ${device.px_width}, RAM: ${device.ram}, Screen Height: ${device.sc_h}, Talk Time: ${device.talk_time}, 3G: ${device.three_g}, Touch Screen: ${device.touch_screen}, WiFi: ${device.wifi}, Price Range: ${device.price_range}
+                    </li>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching devices:', error);
+            }
+        }
+
+        async function fetchDeviceById() {
+            const deviceId = document.getElementById('device-id').value;
+            const response = await fetch(`/api/get_device/${deviceId}`);
+            if (response.status === 404) {
+                alert('Device not found');
+                return;
+            }
+            const device = await response.json();
+            document.getElementById('device-details').innerText = `
+                ID: ${device.id}, Battery Power: ${device.battery_power}, Blue: ${device.blue}, Clock Speed: ${device.clock_speed}, Dual SIM: ${device.dual_sim}, FC: ${device.fc}, 4G: ${device.four_g}, M Depth: ${device.m_dep}, Cores: ${device.n_cores}, PC: ${device.pc}, PX Height: ${device.px_height}, PX Width: ${device.px_width}, RAM: ${device.ram}, Screen Height: ${device.sc_h}, Talk Time: ${device.talk_time}, 3G: ${device.three_g}, Touch Screen: ${device.touch_screen}, WiFi: ${device.wifi}, Price Range: ${device.price_range}
+            `;
+        }
+
+        async function addDevice(event) {
+            event.preventDefault();
+            const device = {
+                battery_power: parseFloat(document.getElementById('battery_power').value),
+                blue: parseFloat(document.getElementById('blue').value),
+                clock_speed: parseFloat(document.getElementById('clock_speed').value),
+                dual_sim: parseFloat(document.getElementById('dual_sim').value),
+                fc: parseFloat(document.getElementById('fc').value),
+                four_g: parseFloat(document.getElementById('four_g').value),
+                m_dep: parseFloat(document.getElementById('m_dep').value),
+                n_cores: parseFloat(document.getElementById('n_cores').value),
+                pc: parseFloat(document.getElementById('pc').value),
+                px_height: parseFloat(document.getElementById('px_height').value),
+                px_width: parseFloat(document.getElementById('px_width').value),
+                ram: parseFloat(document.getElementById('ram').value),
+                sc_h: parseFloat(document.getElementById('sc_h').value),
+                talk_time: parseFloat(document.getElementById('talk_time').value),
+                three_g: parseFloat(document.getElementById('three_g').value),
+                touch_screen: parseFloat(document.getElementById('touch_screen').value),
+                wifi: parseFloat(document.getElementById('wifi').value),
+                price_range: document.getElementById('price_range').value
+            };
+            const response = await fetch('/api/devices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(device)
+            });
+            const newDevice = await response.json();
+            alert(`Device added: ID ${newDevice.id}, Price Range ${newDevice.price_range}`);
+            fetchDevices();
+        }
+    </script>
+</head>
+<body>
+    <h1>Price Range Prediction and Device Management</h1>
+    
+    <section>
+        <h2>Predict Price Range from CSV</h2>
+        <form action="/predict_csv" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Predict from CSV</button>
+        </form>
+    </section>
+
+    <section>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Management</title>
+</head>
+<body>
+    <h2>Device Management</h2>
+
+    <h3>Add New Device</h3>
+    <form action="/add_device" method="post">
+        <label for="battery_power">Battery Power:</label>
+        <input type="number" step="any" id="battery_power" name="battery_power" required>
+        <br>
+        <label for="blue">Blue:</label>
+        <input type="number" step="any" id="blue" name="blue" required>
+        <br>
+        <label for="clock_speed">Clock Speed:</label>
+        <input type="number" step="any" id="clock_speed" name="clock_speed" required>
+        <br>
+        <label for="dual_sim">Dual SIM:</label>
+        <input type="number" step="any" id="dual_sim" name="dual_sim" required>
+        <br>
+        <label for="fc">FC:</label>
+        <input type="number" step="any" id="fc" name="fc" required>
+        <br>
+        <label for="four_g">4G:</label>
+        <input type="number" step="any" id="four_g" name="four_g" required>
+        <br>
+        <label for="m_dep">M Depth:</label>
+        <input type="number" step="any" id="m_dep" name="m_dep" required>
+        <br>
+        <label for="n_cores">Number of Cores:</label>
+        <input type="number" step="any" id="n_cores" name="n_cores" required>
+        <br>
+        <label for="pc">PC:</label>
+        <input type="number" step="any" id="pc" name="pc" required>
+        <br>
+        <label for="px_height">PX Height:</label>
+        <input type="number" step="any" id="px_height" name="px_height" required>
+        <br>
+        <label for="px_width">PX Width:</label>
+        <input type="number" step="any" id="px_width" name="px_width" required>
+        <br>
+        <label for="ram">RAM:</label>
+        <input type="number" step="any" id="ram" name="ram" required>
+        <br>
+        <label for="sc_h">Screen Height:</label>
+        <input type="number" step="any" id="sc_h" name="sc_h" required>
+        <br>
+        <label for="talk_time">Talk Time:</label>
+        <input type="number" step="any" id="talk_time" name="talk_time" required>
+        <br>
+        <label for="three_g">3G:</label>
+        <input type="number" step="any" id="three_g" name="three_g" required>
+        <br>
+        <label for="touch_screen">Touch Screen:</label>
+        <input type="number" step="any" id="touch_screen" name="touch_screen" required>
+        <br>
+        <label for="wifi">WiFi:</label>
+        <input type="number" step="any" id="wifi" name="wifi" required>
+        <br>
+        
+        <button type="submit">Add Device</button>
+    </form>
+</body>
+</html>
+
+        </form>
+
+        <h3>Retrieve All Devices</h3>
+        <button onclick="fetchDevices()">Get All Devices</button>
+        <ul id="devices-list"></ul>
+
+        <h3>Retrieve Device by ID</h3>
+        <label for="device-id">Device ID:</label>
+        <input type="number" id="device-id" required>
+        <button onclick="fetchDeviceById()">Get Device</button>
+        <p id="device-details"></p>
+    </section>
+</body>
+</html>
